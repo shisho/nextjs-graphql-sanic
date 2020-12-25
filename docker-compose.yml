@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  front:
+    build:
+      context: .
+      dockerfile: docker/frontend/dockerfile
+    image: frontend
+    entrypoint: yarn dev
+    platform: linux/amd64
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+      - /app/frontend/.next
+      - /app/node_modules
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/backend/dockerfile
+    image: backend
+    entrypoint: python3 backend/app.py
+    platform: linux/amd64
+    ports: 
+      - 8000:8000
+    volumes:
+      - .:/app
+      - /app/.venv

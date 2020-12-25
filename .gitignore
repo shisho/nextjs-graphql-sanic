@@ -1,6 +1,5 @@
-.DS_Store
+.ds_store
 .vscode/
 .venv
 node_modules/
 frontend/.next
-

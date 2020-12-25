@@ -1,0 +1,7 @@
+.ds_store
+.vscode
+.venv
+.git
+node_modules
+package-lock.json
+frontend/.next
