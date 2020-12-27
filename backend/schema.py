@@ -80,7 +80,7 @@ def get_character(id):
 
 def get_friends(character, _info):
     """Allows us to query for a character's friends."""
-    return map(get_character, character.friends)
+    return map(get_character, character["friends"])
 
 
 def get_hero(root, _info, episode):
