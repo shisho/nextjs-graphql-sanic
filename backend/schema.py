@@ -1,3 +1,5 @@
+from typing import List
+from dataclasses import dataclass
 from graphql import (
     GraphQLArgument,
     GraphQLEnumType,
@@ -12,7 +14,34 @@ from graphql import (
 )
 
 
-luke = dict(
+#
+# type
+#
+@dataclass
+class Character:
+    id: str
+    name: str
+    friends: List[str]
+    appearsIn: list[int]
+
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+
+@dataclass
+class Human(Character):
+    homePlanet: str
+
+
+@dataclass
+class Droid(Character):
+    primaryFunction: str
+
+
+#
+# data
+#
+luke = Human(
     id="1000",
     name="Luke Skywalker",
     homePlanet="Tatooine",
@@ -20,7 +49,7 @@ luke = dict(
     appearsIn=[4, 5, 6],
 )
 
-vader = dict(
+vader = Human(
     id="1001",
     name="Darth Vader",
     homePlanet="Tatooine",
@@ -28,7 +57,7 @@ vader = dict(
     appearsIn=[4, 5, 6],
 )
 
-han = dict(
+han = Human(
     id="1002",
     name="Han Solo",
     homePlanet=None,
@@ -36,7 +65,7 @@ han = dict(
     appearsIn=[4, 5, 6],
 )
 
-leia = dict(
+leia = Human(
     id="1003",
     name="Leia Organa",
     homePlanet="Alderaan",
@@ -44,13 +73,13 @@ leia = dict(
     appearsIn=[4, 5, 6],
 )
 
-tarkin = dict(
+tarkin = Human(
     id="1004", name="Wilhuff Tarkin", homePlanet=None, friends=["1001"], appearsIn=[4]
 )
 
 human_data = {"1000": luke, "1001": vader, "1002": han, "1003": leia, "1004": tarkin}
 
-threepio = dict(
+threepio = Droid(
     id="2000",
     name="C-3PO",
     primaryFunction="Protocol",
@@ -58,7 +87,7 @@ threepio = dict(
     appearsIn=[4, 5, 6],
 )
 
-artoo = dict(
+artoo = Droid(
     id="2001",
     name="R2-D2",
     primaryFunction="Astromech",
@@ -69,6 +98,9 @@ artoo = dict(
 droid_data = {"2000": threepio, "2001": artoo}
 
 
+#
+# resolvers
+#
 def get_character_type(character, _info, _type):
     return "Droid" if character["id"] in droid_data else "Human"
 
@@ -80,7 +112,7 @@ def get_character(id):
 
 def get_friends(character, _info):
     """Allows us to query for a character's friends."""
-    return map(get_character, character["friends"])
+    return map(get_character, character.friends)
 
 
 def get_hero(root, _info, episode):
@@ -105,6 +137,9 @@ def get_secret_backstory(_character, _info):
     raise RuntimeError("secretBackstory is secret.")
 
 
+#
+# GraphQL schema
+#
 episode_enum = GraphQLEnumType(
     "Episode",
     {"NEWHOPE": 4, "EMPIRE": 5, "JEDI": 6},
